@@ -1,0 +1,74 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  AKS_RG_NAME: 'ant-bicepbuild'
+  AKS_CLUSTER_NAME: 'bicepbuild'
+  AKS_ADMIN_NAME: 'anthony'
+  AKS_ADMIN_RSA_PUBKEY: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCd0Z7O2n3XcN0nm1DXGu0LkFMtW9bNyEXQC1FgPskQ1FN1FNIuumHdRC6h1w44/aUiDBaOZ+Tb/opB30OZDNAqdc0L0tBqatZiP1oIorFrjAS15vCdMUy3S6u9WxJKPteB2O45gMvTVz+80mYmWwTsRpSNXXJ6TPKazNwNtgQw0fpKHsnkFHSnBOpqXqtZPhJMCPggHOzU49iK1tPyInMPqhvk4Kk9OC7E3SU7l6hQn76wIpREkIdEVxhlLhxN37N+wPk5d1krreJE+EOVg/EJOORIpeG/MIn6ticeCb+dXnyfJkZTh/7J/zmTKlIzF43Eeg3OLMPunQGgPCDtRujZJAA+lFFT4m0h+LmtlWeBO9VlsAmfC2hm0OgGgkn69qLJ3pw5WLBp1NDpgeIwp6jvCYw2sUr4b2VzRfOMKiRngCrNrt9LKdJ57W2t8Y1kkfK9xlLEI/+goLT2KD07NmU4wuFsBHA2uh55S0j/NAUpgouB+nONrelIy8IUnpzlPkM= ant@ant-mbp-work.lan'
+
+jobs:
+  push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./src
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy-k8s:
+    runs-on: ubuntu-latest
+    needs: push-image
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: AzCLI login
+        uses: azure/login@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+
+      - name: Deploy
+        env:
+          BICEP_IMPORTS_ENABLED_EXPERIMENTAL: true
+        run: |
+          az deployment group create \
+            --resource-group ${{ env.AKS_RG_NAME }} \
+            --name 'main' \
+            --template-file ./deploy/main.bicep \
+            --parameters \
+              baseName="${{ env.AKS_CLUSTER_NAME }}" \
+              dnsPrefix="${{ env.AKS_CLUSTER_NAME }}" \
+              linuxAdminUsername="${{ env.AKS_ADMIN_NAME }}" \
+              sshRSAPublicKey="${{ env.AKS_ADMIN_RSA_PUBKEY }}" \
+            --query "properties.outputs"
