@@ -6,40 +6,41 @@ import kubernetes as k8s {
   namespace: 'default'
 }
 
-var front = {
+var build = {
   name: 'bicepbuild'
   version: 'latest'
   image: 'ghcr.io/anthony-c-martin/bicep-on-k8s:main'
   port: 80
 }
 
-resource frontDeploy 'apps/Deployment@v1' = {
+@description('Configure the BicepBuild deployment')
+resource buildDeploy 'apps/Deployment@v1' = {
   metadata: {
-    name: front.name
+    name: build.name
   }
   spec: {
     selector: {
       matchLabels: {
-        app: front.name
-        version: front.version
+        app: build.name
+        version: build.version
       }
     }
     replicas: 1
     template: {
       metadata: {
         labels: {
-          app: front.name
-          version: front.version
+          app: build.name
+          version: build.version
         }
       }
       spec: {
         containers: [
           {
-            name: front.name
-            image: front.image
+            name: build.name
+            image: build.image
             ports: [
               {
-                containerPort: front.port
+                containerPort: build.port
               }
             ]
           }
@@ -49,25 +50,25 @@ resource frontDeploy 'apps/Deployment@v1' = {
   }
 }
 
-@description('Configure front-end service')
-resource frontService 'core/Service@v1' = {
+@description('Configure the BicepBuild service')
+resource buildService 'core/Service@v1' = {
   metadata: {
-    name: front.name
+    name: build.name
     annotations: {
-      'service.beta.kubernetes.io/azure-dns-label-name': front.name
+      'service.beta.kubernetes.io/azure-dns-label-name': build.name
     }
   }
   spec: {
     type: 'LoadBalancer'
     ports: [
       {
-        port: front.port
+        port: build.port
       }
     ]
     selector: {
-      app: front.name
+      app: build.name
     }
   }
 }
 
-output dnsLabel string = front.name
+output dnsLabel string = build.name
