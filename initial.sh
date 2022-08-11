@@ -7,14 +7,14 @@ if [ $? -ne 0 ]; then
   subId=$(az account show --query id 2>/dev/null)
 fi
 
-if [ $subId != '"28cbf98f-381d-4425-9ac4-cf342dab9753"' ]; then
-  az account set -s "28cbf98f-381d-4425-9ac4-cf342dab9753" >/dev/null
+if [ $subId != '"d08e1a72-8180-4ed3-8125-9dff7376b0bd"' ]; then
+  az account set -s "d08e1a72-8180-4ed3-8125-9dff7376b0bd" >/dev/null
 fi
 
-rgName="ant-bicepbuild"
-rgLoation="westcentralus"
+rgName="bicepbuild"
+rgLocation="eastus"
 
-az group create --name $rgName --location $rgLoation
+az group create --name $rgName --location $rgLocation
 
 # Save this as the AZURE_CREDENTIALS GitHub secret
-az ad sp create-for-rbac --name $rgName --role contributor --scopes "/subscriptions/28cbf98f-381d-4425-9ac4-cf342dab9753/resourceGroups/$rgName" --sdk-auth
+az ad sp create-for-rbac --name $rgName --role contributor --scopes "/subscriptions/d08e1a72-8180-4ed3-8125-9dff7376b0bd/resourceGroups/$rgName" --sdk-auth

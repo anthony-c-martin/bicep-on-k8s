@@ -20,7 +20,7 @@ This is a demo of using Bicep extensibility to deploy a dotnet application to a 
 
 ## Testing the real service
 ```sh
-curl -X POST http://bicepbuild.westcentralus.cloudapp.azure.com/Build \
+curl -X POST http://bicepbuild.eastus.cloudapp.azure.com/Build \
     -H 'Content-Type: application/json' \
     -d '{"bicepContents": "param foo string"}'
 ```
