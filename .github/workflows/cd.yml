@@ -65,6 +65,7 @@ jobs:
           az deployment group create \
             --resource-group ${{ env.AKS_RG_NAME }} \
             --name 'main' \
+            --debug \
             --template-file ./deploy/main.bicep \
             --parameters \
               baseName="${{ env.AKS_CLUSTER_NAME }}" \
