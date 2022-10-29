@@ -48,6 +48,9 @@ jobs:
   deploy-k8s:
     runs-on: ubuntu-latest
     needs: push-image
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -56,7 +59,9 @@ jobs:
       - name: AzCLI login
         uses: azure/login@v1
         with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          client-id: ${{ secrets.ACR_CLIENT_ID }}
+          tenant-id: ${{ secrets.ACR_TENANT_ID }}
+          subscription-id: ${{ secrets.ACR_SUBSCRIPTION_ID }}
 
       - name: Deploy
         env:
