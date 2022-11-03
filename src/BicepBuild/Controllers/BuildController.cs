@@ -21,16 +21,18 @@ public class BuildController : ControllerBase
         ImmutableArray<CompileDiagnostic> Diagnostics);
 
     private readonly ILogger<BuildController> _logger;
+    private readonly BicepCompiler bicepCompiler;
 
-    public BuildController(ILogger<BuildController> logger)
+    public BuildController(ILogger<BuildController> logger, BicepCompiler bicepCompiler)
     {
         _logger = logger;
+        this.bicepCompiler = bicepCompiler;
     }
 
     [HttpPost]
     public CompileResponse Post(CompileRequest request)
     {
-        var (emitResult, templateContents) = BicepCompiler.Compile(request.BicepContents);
+        var (emitResult, templateContents) = bicepCompiler.Compile(request.BicepContents);
 
         return new CompileResponse(
             emitResult.Status != EmitStatus.Failed,

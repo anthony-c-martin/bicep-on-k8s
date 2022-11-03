@@ -64,8 +64,6 @@ jobs:
           subscription-id: ${{ secrets.ACR_SUBSCRIPTION_ID }}
 
       - name: Deploy
-        env:
-          BICEP_IMPORTS_ENABLED_EXPERIMENTAL: true
         run: |
           az deployment group create \
             --resource-group ${{ env.AKS_RG_NAME }} \

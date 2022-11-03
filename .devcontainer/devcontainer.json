@@ -10,17 +10,13 @@
     "ms-azuretools.vscode-bicep",
     "editorconfig.editorconfig",
     "github.vscode-pull-request-github",
-    "ms-dotnettools.csharp",
+    "ms-dotnettools.csharp"
   ],
   "remoteUser": "vscode",
-  "remoteEnv": {
-    "BICEP_IMPORTS_ENABLED_EXPERIMENTAL": "true"
-  },
   "features": {
     "github-cli": "latest",
     "azure-cli": "latest",
     "docker-in-docker": "latest",
-    "kubectl-helm-minikube": "latest",
-    "dotnet": "latest"
+    "kubectl-helm-minikube": "latest"
   }
 }
