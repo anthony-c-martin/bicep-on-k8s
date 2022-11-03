@@ -17,6 +17,7 @@
     "github-cli": "latest",
     "azure-cli": "latest",
     "docker-in-docker": "latest",
-    "kubectl-helm-minikube": "latest"
+    "kubectl-helm-minikube": "latest",
+    "dotnet": "latest"
   }
 }
