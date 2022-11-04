@@ -4,8 +4,8 @@ param linuxAdminUsername string
 param sshRSAPublicKey string
 
 var osDiskSizeGB = 0
-var agentCount = 3
-var agentVmSize = 'Standard_D2_v5'
+var agentCount = 1
+var agentVmSize = 'Standard_B2s'
 
 #disable-next-line no-loc-expr-outside-params
 var location = resourceGroup().location
