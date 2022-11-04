@@ -1,5 +1,5 @@
 using Bicep.Core;
-using BicepBuild.Controllers;
+using BicepBuild;
 
 var builder = WebApplication.CreateBuilder(args);
 

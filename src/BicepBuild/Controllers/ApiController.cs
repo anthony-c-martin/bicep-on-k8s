@@ -1,13 +1,11 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc;
-using Bicep.Core;
 using Bicep.Core.Emit;
 
 namespace BicepBuild.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class BuildController : ControllerBase
+public class ApiController : ControllerBase
 {
     public record CompileDiagnostic(
         string Code,
@@ -20,17 +18,22 @@ public class BuildController : ControllerBase
         string TemplateContents,
         ImmutableArray<CompileDiagnostic> Diagnostics);
 
-    private readonly ILogger<BuildController> _logger;
+    public record DecompileRequest(
+        string JsonContents);
+    public record DecompileResponse(
+        string FileName,
+        ImmutableDictionary<string, string> FileLookup);
+
     private readonly BicepCompiler bicepCompiler;
 
-    public BuildController(ILogger<BuildController> logger, BicepCompiler bicepCompiler)
+    public ApiController(BicepCompiler bicepCompiler)
     {
-        _logger = logger;
         this.bicepCompiler = bicepCompiler;
     }
 
     [HttpPost]
-    public CompileResponse Post(CompileRequest request)
+    [Route("build")]
+    public CompileResponse Build(CompileRequest request)
     {
         var (emitResult, templateContents) = bicepCompiler.Compile(request.BicepContents);
 
@@ -38,5 +41,14 @@ public class BuildController : ControllerBase
             emitResult.Status != EmitStatus.Failed,
             templateContents,
             emitResult.Diagnostics.Select(x => new CompileDiagnostic(x.Code, x.Message, x.Level.ToString())).ToImmutableArray());
+    }
+
+    [HttpPost]
+    [Route("decompile")]
+    public DecompileResponse Decompile(DecompileRequest request)
+    {
+        var (entryFile, filesDict) = bicepCompiler.Decompile(request.JsonContents);
+
+        return new DecompileResponse(entryFile, filesDict);
     }
 }
