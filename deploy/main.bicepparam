@@ -1,0 +1,6 @@
+using './main.bicep'
+
+param baseName = 'bicepbuild'
+param dnsPrefix = 'bicepbuild'
+param linuxAdminUsername = 'anthony'
+param sshRSAPublicKey = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCd0Z7O2n3XcN0nm1DXGu0LkFMtW9bNyEXQC1FgPskQ1FN1FNIuumHdRC6h1w44/aUiDBaOZ+Tb/opB30OZDNAqdc0L0tBqatZiP1oIorFrjAS15vCdMUy3S6u9WxJKPteB2O45gMvTVz+80mYmWwTsRpSNXXJ6TPKazNwNtgQw0fpKHsnkFHSnBOpqXqtZPhJMCPggHOzU49iK1tPyInMPqhvk4Kk9OC7E3SU7l6hQn76wIpREkIdEVxhlLhxN37N+wPk5d1krreJE+EOVg/EJOORIpeG/MIn6ticeCb+dXnyfJkZTh/7J/zmTKlIzF43Eeg3OLMPunQGgPCDtRujZJAA+lFFT4m0h+LmtlWeBO9VlsAmfC2hm0OgGgkn69qLJ3pw5WLBp1NDpgeIwp6jvCYw2sUr4b2VzRfOMKiRngCrNrt9LKdJ57W2t8Y1kkfK9xlLEI/+goLT2KD07NmU4wuFsBHA2uh55S0j/NAUpgouB+nONrelIy8IUnpzlPkM= ant@ant-mbp-work.lan'
