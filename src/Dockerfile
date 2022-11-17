@@ -1,7 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /app
-COPY BicepBuild/BicepBuild.csproj .
-RUN dotnet restore BicepBuild.csproj
 COPY ./BicepBuild .
 RUN dotnet build BicepBuild.csproj -c Release -o /out
 

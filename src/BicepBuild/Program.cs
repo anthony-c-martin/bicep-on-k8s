@@ -1,6 +1,3 @@
-using Bicep.Core;
-using BicepBuild;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,7 +7,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddBicepCore();
-builder.Services.AddSingleton<BicepCompiler>();
+builder.Services.AddBicepDecompiler();
 
 var app = builder.Build();
 

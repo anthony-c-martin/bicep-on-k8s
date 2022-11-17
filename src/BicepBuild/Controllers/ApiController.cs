@@ -1,6 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc;
 using Bicep.Core.Emit;
+using Bicep.Core;
+using System.IO.Abstractions;
+using Bicep.Decompiler;
 
 namespace BicepBuild.Controllers;
 
@@ -25,29 +28,47 @@ public class ApiController : ControllerBase
         ImmutableDictionary<string, string> FileLookup);
 
     private readonly BicepCompiler bicepCompiler;
+    private readonly BicepDecompiler bicepDecompiler;
+    private readonly IFileSystem fileSystem;
 
-    public ApiController(BicepCompiler bicepCompiler)
+    public ApiController(
+        BicepCompiler bicepCompiler,
+        BicepDecompiler bicepDecompiler,
+        IFileSystem fileSystem)
     {
         this.bicepCompiler = bicepCompiler;
+        this.bicepDecompiler = bicepDecompiler;
+        this.fileSystem = fileSystem;
     }
 
     [HttpPost]
     [Route("build")]
-    public CompileResponse Build(CompileRequest request)
+    public async Task<CompileResponse> Build(CompileRequest request)
     {
-        var (emitResult, templateContents) = bicepCompiler.Compile(request.BicepContents);
+        await fileSystem.File.WriteAllTextAsync("/main.bicep", request.BicepContents);
+        var compilation = await bicepCompiler.CreateCompilation(new Uri("file:///main.bicep"));
+        var emitter = new TemplateEmitter(compilation.GetEntrypointSemanticModel());
+
+        using var stringWriter = new StringWriter();
+        var emitResult = emitter.Emit(stringWriter);
 
         return new CompileResponse(
             emitResult.Status != EmitStatus.Failed,
-            templateContents,
+            stringWriter.ToString(),
             emitResult.Diagnostics.Select(x => new CompileDiagnostic(x.Code, x.Message, x.Level.ToString())).ToImmutableArray());
     }
 
     [HttpPost]
     [Route("decompile")]
-    public DecompileResponse Decompile(DecompileRequest request)
+    public async Task<DecompileResponse> Decompile(DecompileRequest request)
     {
-        var (entryFile, filesDict) = bicepCompiler.Decompile(request.JsonContents);
+        await fileSystem.File.WriteAllTextAsync("/main.json", request.JsonContents);
+        var (entrypointUri, filesToSave) = await bicepDecompiler.Decompile(new Uri("file:///main.json"), new Uri("file:///main.bicep"));
+
+        var entryFile = "main.bicep";
+        var filesDict = filesToSave.ToImmutableDictionary(
+            x => x.Key == entrypointUri ? entryFile : entrypointUri.MakeRelativeUri(x.Key).ToString(),
+            x => x.Value);
 
         return new DecompileResponse(entryFile, filesDict);
     }
