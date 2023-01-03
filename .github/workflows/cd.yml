@@ -62,10 +62,10 @@ jobs:
 
       - name: Deploy
         run: |
-          az bicep build --verbose --debug \
+          az bicep build \
             --file ./deploy/main.bicepparam \
             --outfile ./deploy/parameters.json
-          az deployment group create --verbose --debug \
+          az deployment group create \
             --resource-group ${{ env.AKS_RG_NAME }} \
             --name 'main' \
             --template-file ./deploy/main.bicep \
