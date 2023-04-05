@@ -61,13 +61,13 @@ jobs:
           subscription-id: ${{ secrets.ACR_SUBSCRIPTION_ID }}
 
       - name: Deploy
-        run: |
-          az bicep build \
-            --file ./deploy/main.bicepparam \
-            --outfile ./deploy/parameters.json
-          az deployment group create \
-            --resource-group ${{ env.AKS_RG_NAME }} \
-            --name 'main' \
-            --template-file ./deploy/main.bicep \
-            --parameters @./deploy/parameters.json \
-            --query "properties.outputs"
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.47.0
+          inlineScript: |
+            az deployment group create \
+              --resource-group ${{ env.AKS_RG_NAME }} \
+              --name 'main' \
+              --template-file ./deploy/main.bicep \
+              --parameters ./deploy/main.bicepparam \
+              --query "properties.outputs"
