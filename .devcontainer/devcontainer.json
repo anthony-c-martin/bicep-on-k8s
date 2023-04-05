@@ -1,23 +1,31 @@
 {
-  "build": {
-    "dockerfile": "Dockerfile",
-    "args": {
-      "VARIANT": "ubuntu-22.04"
+  "image": "mcr.microsoft.com/devcontainers/base:bullseye",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-azureresourcegroups",
+        "ms-azuretools.vscode-bicep",
+        "editorconfig.editorconfig",
+        "github.vscode-pull-request-github",
+        "ms-dotnettools.csharp"
+      ]
     }
   },
-  "extensions": [
-    "ms-azuretools.vscode-azureresourcegroups",
-    "ms-azuretools.vscode-bicep",
-    "editorconfig.editorconfig",
-    "github.vscode-pull-request-github",
-    "ms-dotnettools.csharp"
-  ],
-  "remoteUser": "vscode",
   "features": {
-    "github-cli": "latest",
-    "azure-cli": "latest",
-    "docker-in-docker": "latest",
-    "kubectl-helm-minikube": "latest",
-    "dotnet": "latest"
+    "ghcr.io/devcontainers/features/azure-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/dotnet:1": {
+      "version": "7.0"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+      "version": "latest"
+    }
   }
 }
