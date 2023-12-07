@@ -20,7 +20,7 @@ jobs:
           azcliversion: 2.54.0
           inlineScript: |
             az bicep install
-            ~/.azure/bin/bicep lint ./deploy/main.bicep --diagnostics-format sarif 2> lint.sarif
+            ~/.azure/bin/bicep lint ./asdf.bicep --diagnostics-format sarif 2> lint.sarif
             cat lint.sarif
 
       - name: Upload SARIF file
