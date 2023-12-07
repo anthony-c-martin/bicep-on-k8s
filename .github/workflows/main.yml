@@ -1,0 +1,29 @@
+name: Upload Lint Results
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Bicep Linter
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.54.0
+          inlineScript: |
+            az bicep install
+            ~/.azure/bin/bicep lint ./deploy/main.bicep --diagnostics-format sarif 2> lint.sarif
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: lint.sarif
+          category: bicep
