@@ -8,7 +8,6 @@ on:
   workflow_dispatch:
 
 env:
-  AZCLI_VERSION: 2.55.0
   BICEP_VERSION: 0.24.24
 
 jobs:
@@ -34,15 +33,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Lint Bicep
-        uses: azure/CLI@v1
+      - name: Setup Bicep
+        uses: anthony-c-martin/setup-bicep@v0.2
         with:
-          azcliversion: ${{ env.AZCLI_VERSION }}
-          inlineScript: |
-            az bicep install --version v${{ env.BICEP_VERSION }}
-            ~/.azure/bin/bicep lint ./deploy/main.bicepparam --diagnostics-format sarif > bicep.sarif
+          version: ${{ env.BICEP_VERSION }}
+
+      - name: Lint Bicep
+        run: |
+          bicep lint ./deploy/main.bicepparam --diagnostics-format sarif > bicep.sarif
 
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v2
         with:
-            sarif_file: bicep.sarif
+          sarif_file: bicep.sarif
