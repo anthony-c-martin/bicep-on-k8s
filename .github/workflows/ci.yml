@@ -37,7 +37,7 @@ jobs:
       - name: Lint Bicep
         uses: azure/CLI@v1
         with:
-          azcliversion: env.AZCLI_VERSION
+          azcliversion: ${{ env.AZCLI_VERSION }}
           inlineScript: |
             az bicep install --version v${{ env.BICEP_VERSION }}
             ~/.azure/bin/bicep lint ./deploy/main.bicepparam --diagnostic-format sarif > bicep.sarif
