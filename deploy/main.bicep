@@ -7,7 +7,6 @@ var osDiskSizeGB = 0
 var agentCount = 1
 var agentVmSize = 'Standard_B2s'
 
-#disable-next-line no-loc-expr-outside-params
 var location = resourceGroup().location
 
 resource aks 'Microsoft.ContainerService/managedClusters@2022-04-01' = {
@@ -18,7 +17,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2022-04-01' = {
     agentPoolProfiles: [
       {
         name: 'agentpool'
-        osDiskSizeGB: osDiskSizeGB
+        osDisksSizeGB: osDiskSizeGB
         count: agentCount
         vmSize: agentVmSize
         osType: 'Linux'
@@ -51,4 +50,4 @@ module kubernetes './modules/kubernetes.bicep' = {
 var dnsLabel = kubernetes.outputs.dnsLabel
 var normalizedLocation = toLower(replace(location, ' ', ''))
 
-output endpoint string = 'http://${dnsLabel}.${normalizedLocation}.cloudapp.azure.com'
+output endpoint string 'http://${dnsLabel}.${normalizedLocation}.cloudapp.azure.com'
