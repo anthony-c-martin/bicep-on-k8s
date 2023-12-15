@@ -40,7 +40,7 @@ jobs:
           azcliversion: ${{ env.AZCLI_VERSION }}
           inlineScript: |
             az bicep install --version v${{ env.BICEP_VERSION }}
-            ~/.azure/bin/bicep lint ./deploy/main.bicepparam --diagnostic-format sarif > bicep.sarif
+            ~/.azure/bin/bicep lint ./deploy/main.bicepparam --diagnostics-format sarif > bicep.sarif
 
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v2
