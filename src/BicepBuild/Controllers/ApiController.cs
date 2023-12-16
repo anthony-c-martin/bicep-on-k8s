@@ -22,10 +22,14 @@ public class ApiController : ControllerBase
         ImmutableArray<CompileDiagnostic> Diagnostics);
 
     public record DecompileRequest(
-        string JsonContents);
+        string Template);
     public record DecompileResponse(
-        string FileName,
-        ImmutableDictionary<string, string> FileLookup);
+        ImmutableArray<FileDefinition> Files,
+        string EntryPoint);
+
+    public record FileDefinition(
+        string Path,
+        string Contents);
 
     private readonly BicepCompiler bicepCompiler;
     private readonly BicepDecompiler bicepDecompiler;
@@ -62,14 +66,14 @@ public class ApiController : ControllerBase
     [Route("decompile")]
     public async Task<DecompileResponse> Decompile(DecompileRequest request)
     {
-        await fileSystem.File.WriteAllTextAsync("/main.json", request.JsonContents);
-        var (entrypointUri, filesToSave) = await bicepDecompiler.Decompile(new Uri("file:///main.json"), new Uri("file:///main.bicep"));
+        var decompilation = await bicepDecompiler.Decompile(new Uri("file:///main.bicep"), request.Template);
 
-        var entryFile = "main.bicep";
-        var filesDict = filesToSave.ToImmutableDictionary(
-            x => x.Key == entrypointUri ? entryFile : entrypointUri.MakeRelativeUri(x.Key).ToString(),
-            x => x.Value);
+        var files = decompilation.FilesToSave
+            .Select(kvp => new FileDefinition(
+                Path: kvp.Key.LocalPath.Replace("/", string.Empty),
+                Contents: kvp.Value))
+            .ToImmutableArray();
 
-        return new DecompileResponse(entryFile, filesDict);
+        return new DecompileResponse(files, "main.bicep");
     }
 }

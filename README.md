@@ -33,7 +33,7 @@ This is a demo of using Bicep extensibility to deploy a dotnet application to a 
         ```sh
         curl -X POST http://localhost:8001/decompile \
           -H 'Content-Type: application/json' \
-          -d '{"jsonContents": "{\n  \"$schema\": \"https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#\",\n  \"contentVersion\": \"1.0.0.0\",\n  \"parameters\": {\n    \"foo\": {\n      \"type\": \"string\"\n    }\n  },\n  \"resources\": []\n}"}'
+          -d '{"template": "{\n  \"$schema\": \"https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#\",\n  \"contentVersion\": \"1.0.0.0\",\n  \"parameters\": {\n    \"foo\": {\n      \"type\": \"string\"\n    }\n  },\n  \"resources\": []\n}"}'
         ```
 
 ## Testing the real service
@@ -47,5 +47,5 @@ This is a demo of using Bicep extensibility to deploy a dotnet application to a 
     ```sh
     curl -X POST http://bicepbuild.eastus.cloudapp.azure.com/decompile \
       -H 'Content-Type: application/json' \
-      -d '{"jsonContents": "{\n  \"$schema\": \"https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#\",\n  \"contentVersion\": \"1.0.0.0\",\n  \"parameters\": {\n    \"foo\": {\n      \"type\": \"string\"\n    }\n  },\n  \"resources\": []\n}"}'
+      -d '{"template": "{\n  \"$schema\": \"https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#\",\n  \"contentVersion\": \"1.0.0.0\",\n  \"parameters\": {\n    \"foo\": {\n      \"type\": \"string\"\n    }\n  },\n  \"resources\": []\n}"}'
     ```
