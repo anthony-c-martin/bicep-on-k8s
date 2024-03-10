@@ -67,7 +67,7 @@ jobs:
           subscription-id: ${{ secrets.ACR_SUBSCRIPTION_ID }}
 
       - name: Deploy
-        uses: azure/CLI@v1
+        uses: azure/CLI@v2
         with:
           azcliversion: ${{ env.AZCLI_VERSION }}
           inlineScript: |
