@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.0" />
     <PackageReference Include="Azure.Bicep.Core" Version="0.24.24" />
     <PackageReference Include="Azure.Bicep.Decompiler" Version="0.24.24" />
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="21.3.1" />
